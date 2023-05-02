@@ -1,7 +1,7 @@
 from django.db import models
 
 class Women(models.Model):
-    title = models.CharField(max_length=266)
+    title = models.CharField(max_length=255)
     content = models.TextField(blank=True)
     time_create = models.DateTimeField(auto_now_add=True)
     teme_update = models.DateTimeField(auto_now=True)
