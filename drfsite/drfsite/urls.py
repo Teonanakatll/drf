@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from women.views import WomenAPIView
+from women.views import WomenAPIView, WomenAPIList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # v1 - версия сериализатора
-    path('api/v1/womenlist/', WomenAPIView.as_view()),
+    path('api/v1/womenlist/', WomenAPIList.as_view()),
     # Передаём рк записи которую хотим поменять
-    path('api/v1/womenlist/<int:pk>/', WomenAPIView.as_view()),
+    path('api/v1/womenlist/<int:pk>/', WomenAPIList.as_view()),
 ]

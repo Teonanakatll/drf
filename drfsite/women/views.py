@@ -10,6 +10,14 @@ from .serializers import WomenSerializer
 
 # Класс APIView стоит во главе иерархии всех классов представлений в drf
 # сайт www.django-rest-framework.org/api-guide/generic-views/
+
+# ListCreateAPIView реализует 2 метода (get() и post())
+class WomenAPIList(generics.ListCreateAPIView):
+    # Создаём queryset который будет ссылаться на список записей который мы будем возвращать клиенту
+    queryset = Women.objects.all()
+    # Сериализатор который будет обрабатывать queryset
+    serializer_class = WomenSerializer
+
 class WomenAPIView(APIView):
     # Метод get отвечает за обработку всех get-запросов на сервер
     def get(self, request):  # request хранит все параметры входящего get-запроса

@@ -15,32 +15,40 @@ from .models import Women
 #         self.title = title
 #         self.content = content
 
+class WomenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Women
+        # fields = ("title", "content", "cat")
+        # Отобразить все поля
+        fields = "__all__"
 
-class WomenSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=255)
-    content = serializers.CharField()
-    # read_only=True поля только для чтения, будем читать при добавлении в бд.
-    time_create = serializers.DateTimeField(read_only=True)
-    teme_update = serializers.DateTimeField(read_only=True)
-    is_published = serializers.BooleanField(default=True)
-    cat_id = serializers.IntegerField()
+# # Пример работы с базовым классом Serializer
+# class WomenSerializer(serializers.Serializer):
+#     title = serializers.CharField(max_length=255)
+#     content = serializers.CharField()
+#     # read_only=True поля только для чтения, будем читать при добавлении в бд.
+#     time_create = serializers.DateTimeField(read_only=True)
+#     teme_update = serializers.DateTimeField(read_only=True)
+#     is_published = serializers.BooleanField(default=True)
+#     cat_id = serializers.IntegerField()
+#
+#     def create(self, validated_data):
+#         # Передаём методу create() класса Women распакованные данные из post-запроса прошедшие валидацию
+#         return Women.objects.create(**validated_data)
+#
+#     # instance ссылка на запись в бд, validated_data словарь из проверенных данных которые нужно изменить в бд
+#     def update(self, instance, validated_data):
+#         # Так как instance это обьект модели Women, то используя ORM джанго присваиваем полям instance зночения
+#         # полей из славаря validated_data, иначе (если неможем взять значение из славаря) прописываем значение которое
+#         # уже есть в этой модели Women
+#         instance.title = validated_data.get("title", instance.title)
+#         instance.content = validated_data.get("content", instance.content)
+#         instance.time_update = validated_data.get("time_update", instance.time_update)
+#         instance.is_published = validated_data.get("is_published", instance.is_published)
+#         instance.cat_id = validated_data.get("cat_id", instance.cat_id)
+#         instance.save()
+#         return instance
 
-    def create(self, validated_data):
-        # Передаём методу create() класса Women распакованные данные из post-запроса прошедшие валидацию
-        return Women.objects.create(**validated_data)
-
-    # instance ссылка на запись в бд, validated_data словарь из проверенных данных которые нужно изменить в бд
-    def update(self, instance, validated_data):
-        # Так как instance это обьект модели Women, то используя ORM джанго присваиваем полям instance зночения
-        # полей из славаря validated_data, иначе (если неможем взять значение из славаря) прописываем значение которое
-        # уже есть в этой модели Women
-        instance.title = validated_data.get("title", instance.title)
-        instance.content = validated_data.get("content", instance.content)
-        instance.time_update = validated_data.get("time_update", instance.time_update)
-        instance.is_published = validated_data.get("is_published", instance.is_published)
-        instance.cat_id = validated_data.get("cat_id", instance.cat_id)
-        instance.save()
-        return instance
 
 # ПРОПИСЫВАЕМ ФУНКЦИИ СЕРЕАЛИЗАТОРА ВРУЧНУЮ
 # # Функция кодирования модели в json-строку
