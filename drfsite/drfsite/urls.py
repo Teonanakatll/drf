@@ -23,4 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # v1 - версия сериализатора
     path('api/v1/womenlist/', WomenAPIView.as_view()),
+    # Передаём рк записи которую хотим поменять
+    path('api/v1/womenlist/<int:pk>/', WomenAPIView.as_view()),
 ]

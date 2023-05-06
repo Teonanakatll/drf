@@ -25,7 +25,24 @@ class WomenSerializer(serializers.Serializer):
     is_published = serializers.BooleanField(default=True)
     cat_id = serializers.IntegerField()
 
+    def create(self, validated_data):
+        # Передаём методу create() класса Women распакованные данные из post-запроса прошедшие валидацию
+        return Women.objects.create(**validated_data)
 
+    # instance ссылка на запись в бд, validated_data словарь из проверенных данных которые нужно изменить в бд
+    def update(self, instance, validated_data):
+        # Так как instance это обьект модели Women, то используя ORM джанго присваиваем полям instance зночения
+        # полей из славаря validated_data, иначе (если неможем взять значение из славаря) прописываем значение которое
+        # уже есть в этой модели Women
+        instance.title = validated_data.get("title", instance.title)
+        instance.content = validated_data.get("content", instance.content)
+        instance.time_update = validated_data.get("time_update", instance.time_update)
+        instance.is_published = validated_data.get("is_published", instance.is_published)
+        instance.cat_id = validated_data.get("cat_id", instance.cat_id)
+        instance.save()
+        return instance
+
+# ПРОПИСЫВАЕМ ФУНКЦИИ СЕРЕАЛИЗАТОРА ВРУЧНУЮ
 # # Функция кодирования модели в json-строку
 # def encode():
 #     model = WomenModel('Angelina Jolie', 'Content: Angelina Jolie')
@@ -49,3 +66,7 @@ class WomenSerializer(serializers.Serializer):
 #     serializer.is_valid()
 #     # После проверки валидации появится коллекция validated_data, результат декодирования json-строки
 #     print(serializer.validated_data)
+
+# python manage.py shell
+# from women.serislizers import (encode/decode)
+# encode() decode()
