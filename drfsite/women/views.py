@@ -1,34 +1,47 @@
 from django.forms import model_to_dict
-from rest_framework import generics
+from rest_framework import generics, viewsets, mixins
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
 
 from .models import Women
 from .serializers import WomenSerializer
 
+# ViewSet - позволяет объединить логику для набора связанных представлений в одном классе
+# https://django.fun/ru/docs/django-rest-framework/3.12/api-guide/viewsets/
+
+# ModelViewSet - действия, предоставляемые классом ModelViewSet: .list() , .retrieve() ,
+# .create() , .update() ,.partial_update() , и .destroy().
 
 # Класс APIView стоит во главе иерархии всех классов представлений в drf
 # сайт www.django-rest-framework.org/api-guide/generic-views/
 
-# ListCreateAPIView реализует 2 метода (get() и post())
-class WomenAPIList(generics.ListCreateAPIView):
-    # Создаём queryset который будет ссылаться на список записей который мы будем возвращать клиенту.
-    queryset = Women.objects.all()
-    # Сериализатор который будет обрабатывать queryset
-    serializer_class = WomenSerializer
 
-# UpdateAPIView выполняет put() и patch() запросы (изменяет записи)
-class WomenAPIUpdate(generics.UpdateAPIView):
-    # Связываем queryset с моделью Women (ленивый запрос), класс UpdateAPIView обработает
-    # queryset и вернёт только одну изменённую запись.
+class WomenViewSet(viewsets.ModelViewSet):
     queryset = Women.objects.all()
     serializer_class = WomenSerializer
 
-# RetrieveUpdateDestroyAPIView - получить, изменить, удалить запись. (get(), pyt(), patch(), delete())
-class WomenAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Women.objects.all()
-    serializer_class = WomenSerializer
+
+# # ListCreateAPIView реализует 2 метода (get() и post())
+# class WomenAPIList(generics.ListCreateAPIView):
+#     # Создаём queryset который будет ссылаться на список записей который мы будем возвращать клиенту.
+#     queryset = Women.objects.all()
+#     # Сериализатор который будет обрабатывать queryset
+#     serializer_class = WomenSerializer
+#
+# # UpdateAPIView выполняет put() и patch() запросы (изменяет записи)
+# class WomenAPIUpdate(generics.UpdateAPIView):
+#     # Связываем queryset с моделью Women (ленивый запрос), класс UpdateAPIView обработает
+#     # queryset и вернёт только одну изменённую запись.
+#     queryset = Women.objects.all()
+#     serializer_class = WomenSerializer
+#
+# # RetrieveUpdateDestroyAPIView - получить, изменить, удалить запись. (get(), pyt(), patch(), delete())
+# class WomenAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Women.objects.all()
+#     serializer_class = WomenSerializer
+
 
 # class WomenAPIView(APIView):
 #     # Метод get отвечает за обработку всех get-запросов на сервер
