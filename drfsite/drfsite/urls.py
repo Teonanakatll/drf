@@ -19,6 +19,7 @@ from django.urls import path, include
 
 # from women.views import WomenAPIList, WomenAPIUpdate, WomenAPIDetailView
 from women.views import WomenViewSet
+from rest_framework import routers
 
 # Маршрутизаторы в DRF
 # Маршрутизация ресурсов позволяет быстро объявить все общие маршруты для данного ресурсного контроллера.
@@ -27,10 +28,30 @@ from women.views import WomenViewSet
 # быстрый и последовательный способ подключения логики представления к набору URL.
 # https://django.fun/ru/docs/django-rest-framework/3.12/api-guide/routers/
 
+# Можно создавать собственные роутеры
+class MyCustomRouter(routers.SimpleRouter):
+    routes = [
+        # Каждый класс определяет 1 маршрут
+        routers.Route(url=r'^{prefix}$',              # Шаблон маршрута
+                      mapping={'get': 'list'},        # Связывает тип запроса с соотв. методом ViewSet
+                      name='{basename}-list',         # Название маршрута
+                      detail=False,                   # Список или запись
+                      initkwargs={'suffix': 'List'}   # Доп аргументы
+                      ),
+        routers.Route(url=r'^{prefix}/{lookup}$',
+                      mapping={'get': 'retrieve'},
+                      name='{basename}-detail',
+                      detail=True,
+                      initkwargs={'suffix': 'Detail'}
+                      )
+    ]
+
 from rest_framework import routers
+
 router = routers.SimpleRouter()
 # Регистрируем в роутере WomenViewSet, r'...' - префикс для набора маршрута
-router.register(r'women', WomenViewSet)
+router.register(r'women', WomenViewSet, basename='women')
+print(router.urls)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

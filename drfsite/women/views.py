@@ -1,11 +1,12 @@
 from django.forms import model_to_dict
 from rest_framework import generics, viewsets, mixins
 from django.shortcuts import render
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from .models import Women
+from .models import Women, Category
 from .serializers import WomenSerializer
 
 # ViewSet - позволяет объединить логику для набора связанных представлений в одном классе
@@ -19,8 +20,28 @@ from .serializers import WomenSerializer
 
 
 class WomenViewSet(viewsets.ModelViewSet):
-    queryset = Women.objects.all()
+    # queryset = Women.objects.all()
     serializer_class = WomenSerializer
+
+    # Для вызова списка определённых записей переопределим метод get_queryset
+    def get_queryset(self):
+        # Получаем рк из коллекции kwargs
+        pk = self.kwargs.get("pk")
+
+        if not pk:
+            return Women.objects.all()[:3]
+
+        # get_queryset - должен возврвщать список, поэтому получаем запись через filter()
+        return Women.objects.filter(pk=pk)
+
+    # @action - служит для добавления дополнительных (нестандартных) api-маршрутов
+    # detail=False - указывает что возвращается список, detail=True - одна запись
+    @action(methods=['get'], detail=True)
+    # Новый маршрут формируется с использованием имени метода
+    def category(self, request, pk=None):
+        cats = Category.objects.get(pk=pk)
+        return Response({'cats': cats.name})
+
 
 
 # # ListCreateAPIView реализует 2 метода (get() и post())
