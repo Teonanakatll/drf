@@ -2,11 +2,13 @@ from django.forms import model_to_dict
 from rest_framework import generics, viewsets, mixins
 from django.shortcuts import render
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from .models import Women, Category
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import WomenSerializer
 
 # ViewSet - позволяет объединить логику для набора связанных представлений в одном классе
@@ -19,49 +21,54 @@ from .serializers import WomenSerializer
 # сайт www.django-rest-framework.org/api-guide/generic-views/
 
 
-class WomenViewSet(viewsets.ModelViewSet):
-    # queryset = Women.objects.all()
+# class WomenViewSet(viewsets.ModelViewSet):
+#     # queryset = Women.objects.all()
+#     serializer_class = WomenSerializer
+#
+#     # Для вызова списка определённых записей переопределим метод get_queryset
+#     def get_queryset(self):
+#         # Получаем рк из коллекции kwargs
+#         pk = self.kwargs.get("pk")
+#
+#         if not pk:
+#             return Women.objects.all()[:3]
+#
+#         # get_queryset - должен возврвщать список, поэтому получаем запись через filter()
+#         return Women.objects.filter(pk=pk)
+#
+#     # @action - служит для добавления дополнительных (нестандартных) api-маршрутов
+#     # detail=False - указывает что возвращается список, detail=True - одна запись
+#     @action(methods=['get'], detail=True)
+#     # Новый маршрут формируется с использованием имени метода
+#     def category(self, request, pk=None):
+#         cats = Category.objects.get(pk=pk)
+#         return Response({'cats': cats.name})
+
+
+
+# ListCreateAPIView реализует 2 метода (get() и post())
+class WomenAPIList(generics.ListCreateAPIView):
+    # Создаём queryset который будет ссылаться на список записей который мы будем возвращать клиенту.
+    queryset = Women.objects.all()
+    # Сериализатор который будет обрабатывать queryset
     serializer_class = WomenSerializer
+    # Полный доступ авторизованным и всем для чтения
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    # Для вызова списка определённых записей переопределим метод get_queryset
-    def get_queryset(self):
-        # Получаем рк из коллекции kwargs
-        pk = self.kwargs.get("pk")
+# UpdateAPIView выполняет get() и post() запросы (изменяет записи)
+class WomenAPIUpdate(generics.RetrieveUpdateAPIView):
+    # Связываем queryset с моделью Women (ленивый запрос), класс UpdateAPIView обработает
+    # queryset и вернёт только одну изменённую запись.
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+    permission_class = (IsOwnerOrReadOnly,)
 
-        if not pk:
-            return Women.objects.all()[:3]
-
-        # get_queryset - должен возврвщать список, поэтому получаем запись через filter()
-        return Women.objects.filter(pk=pk)
-
-    # @action - служит для добавления дополнительных (нестандартных) api-маршрутов
-    # detail=False - указывает что возвращается список, detail=True - одна запись
-    @action(methods=['get'], detail=True)
-    # Новый маршрут формируется с использованием имени метода
-    def category(self, request, pk=None):
-        cats = Category.objects.get(pk=pk)
-        return Response({'cats': cats.name})
-
-
-
-# # ListCreateAPIView реализует 2 метода (get() и post())
-# class WomenAPIList(generics.ListCreateAPIView):
-#     # Создаём queryset который будет ссылаться на список записей который мы будем возвращать клиенту.
-#     queryset = Women.objects.all()
-#     # Сериализатор который будет обрабатывать queryset
-#     serializer_class = WomenSerializer
-#
-# # UpdateAPIView выполняет put() и patch() запросы (изменяет записи)
-# class WomenAPIUpdate(generics.UpdateAPIView):
-#     # Связываем queryset с моделью Women (ленивый запрос), класс UpdateAPIView обработает
-#     # queryset и вернёт только одну изменённую запись.
-#     queryset = Women.objects.all()
-#     serializer_class = WomenSerializer
-#
-# # RetrieveUpdateDestroyAPIView - получить, изменить, удалить запись. (get(), pyt(), patch(), delete())
-# class WomenAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Women.objects.all()
-#     serializer_class = WomenSerializer
+# RetrieveUpdateDestroyAPIView - получить, удалить запись. (get(), delete())
+class WomenAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = Women.objects.all()
+    serializer_class = WomenSerializer
+    # Даступ только для администраторав
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 # class WomenAPIView(APIView):

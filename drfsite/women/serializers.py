@@ -16,6 +16,10 @@ from .models import Women
 #         self.content = content
 
 class WomenSerializer(serializers.ModelSerializer):
+    # Автоматически заполняем поле юзера при добавлении записи через апи-форму
+    # Связываемся с моделью Women (поле user), создаём скрытое поле и по умолчанию
+    # прописываем текущего пользователя.
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = Women
         # fields = ("title", "content", "cat")

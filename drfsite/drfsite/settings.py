@@ -131,5 +131,9 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         # API браузера
         'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    # Ограничение прав доступа на уровне всего проекта
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }

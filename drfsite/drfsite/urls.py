@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 # from women.views import WomenAPIList, WomenAPIUpdate, WomenAPIDetailView
-from women.views import WomenViewSet
+from women.views import WomenAPIList, WomenAPIUpdate, WomenAPIDestroy
+
 from rest_framework import routers
 
 # Маршрутизаторы в DRF
@@ -46,16 +47,17 @@ class MyCustomRouter(routers.SimpleRouter):
                       )
     ]
 
-from rest_framework import routers
+# from rest_framework import routers
+#
+# router = routers.SimpleRouter()
+# # Регистрируем в роутере WomenViewSet, r'...' - префикс для набора маршрута
+# router.register(r'women', WomenViewSet, basename='women')
+# print(router.urls)
 
-router = routers.SimpleRouter()
-# Регистрируем в роутере WomenViewSet, r'...' - префикс для набора маршрута
-router.register(r'women', WomenViewSet, basename='women')
-print(router.urls)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include(router.urls)),  # http://127.0.0.1:8000/api/v1/women/
+    # path('api/v1/', include(router.urls)),  # http://127.0.0.1:8000/api/v1/women/
 
     # # Указываем метод для обработки запроса (get) и метод который будет вызываться в самом ViewSet
     # # для обработки (get) запроса, в нашем случае метод .list()
@@ -65,8 +67,8 @@ urlpatterns = [
     # path('api/v1/womenlist/<int:pk>/', WomenViewSet.as_view({'put': 'update'})),
 
     # v1 - версия сериализатора
-    # path('api/v1/womenlist/', WomenAPIList.as_view()),
+    path('api/v1/women/', WomenAPIList.as_view()),
     # Передаём рк записи которую хотим поменять
-    # path('api/v1/womenlist/<int:pk>/', WomenAPIUpdate.as_view()),
-    # path('api/v1/womendetail/<int:pk>/', WomenAPIDetailView.as_view()),
+    path('api/v1/women/<int:pk>/', WomenAPIUpdate.as_view()),
+    path('api/v1/womendelete/<int:pk>/', WomenAPIDestroy.as_view()),
 ]
