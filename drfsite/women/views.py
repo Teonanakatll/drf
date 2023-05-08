@@ -1,8 +1,9 @@
 from django.forms import model_to_dict
 from rest_framework import generics, viewsets, mixins
 from django.shortcuts import render
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
@@ -61,7 +62,10 @@ class WomenAPIUpdate(generics.RetrieveUpdateAPIView):
     # queryset и вернёт только одну изменённую запись.
     queryset = Women.objects.all()
     serializer_class = WomenSerializer
-    permission_class = (IsOwnerOrReadOnly,)
+    # permission_class = (IsOwnerOrReadOnly,)
+    permission_class = (IsAuthenticated,)
+    # Для каждого класса пред. можно конкретизировать способ аут. пользователя
+    authentication_classes = (TokenAuthentication,)  # Доступ только по токенам
 
 # RetrieveUpdateDestroyAPIView - получить, удалить запись. (get(), delete())
 class WomenAPIDestroy(generics.RetrieveDestroyAPIView):

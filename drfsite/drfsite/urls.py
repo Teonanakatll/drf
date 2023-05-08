@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 # from women.views import WomenAPIList, WomenAPIUpdate, WomenAPIDetailView
 from women.views import WomenAPIList, WomenAPIUpdate, WomenAPIDestroy
@@ -59,6 +59,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Подключаем авторизацию через сессию
+    # https://django.fun/ru/docs/django-rest-framework/3.12/api-guide/authentication/
     path('api/v1/drf-auth/', include('rest_framework.urls')),
 
     # path('api/v1/', include(router.urls)),  # http://127.0.0.1:8000/api/v1/women/
@@ -75,4 +76,10 @@ urlpatterns = [
     # Передаём рк записи которую хотим поменять
     path('api/v1/women/<int:pk>/', WomenAPIUpdate.as_view()),
     path('api/v1/womendelete/<int:pk>/', WomenAPIDestroy.as_view()),
+
+    # Пути  Djoser
+    # https://djoser.readthedocs.io/en/latest/base_endpoints.html
+    path('api/v1/auth/', include('djoser.urls')),  # new
+    # Путь ваторизации по токенам
+    re_path(r'auth/', include('djoser.urls.authtoken')),  # new
 ]
