@@ -3,6 +3,7 @@ from rest_framework import generics, viewsets, mixins
 from django.shortcuts import render
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -45,7 +46,11 @@ from .serializers import WomenSerializer
 #         cats = Category.objects.get(pk=pk)
 #         return Response({'cats': cats.name})
 
-
+class WomenAPIListPagination(PageNumberPagination):
+    page_size = 3
+    # Параметр для изменения пагиноции на стороне клиента
+    page_size_query_param = 'page_size'
+    max_page_size = 10000  # Не более записей, в page_size (только на стороне клиента)
 
 # ListCreateAPIView реализует 2 метода (get() и post())
 class WomenAPIList(generics.ListCreateAPIView):
@@ -55,6 +60,7 @@ class WomenAPIList(generics.ListCreateAPIView):
     serializer_class = WomenSerializer
     # Полный доступ авторизованным и всем для чтения
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = WomenAPIListPagination
 
 # UpdateAPIView выполняет get() и post() запросы (изменяет записи)
 class WomenAPIUpdate(generics.RetrieveUpdateAPIView):
