@@ -19,6 +19,7 @@ from django.urls import path, include, re_path
 
 # from women.views import WomenAPIList, WomenAPIUpdate, WomenAPIDetailView
 from women.views import WomenAPIList, WomenAPIUpdate, WomenAPIDestroy
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from rest_framework import routers
 
@@ -82,4 +83,11 @@ urlpatterns = [
     path('api/v1/auth/', include('djoser.urls')),  # new
     # Путь ваторизации по токенам
     re_path(r'auth/', include('djoser.urls.authtoken')),  # new
+
+    # Simplt JWT
+    # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    # Декодирование JWT токенов https://jwt.io/
 ]

@@ -65,7 +65,7 @@ class WomenAPIUpdate(generics.RetrieveUpdateAPIView):
     # permission_class = (IsOwnerOrReadOnly,)
     permission_class = (IsAuthenticated,)
     # Для каждого класса пред. можно конкретизировать способ аут. пользователя
-    authentication_classes = (TokenAuthentication,)  # Доступ только по токенам
+    # authentication_classes = (TokenAuthentication,)  # Доступ только по токенам
 
 # RetrieveUpdateDestroyAPIView - получить, удалить запись. (get(), delete())
 class WomenAPIDestroy(generics.RetrieveDestroyAPIView):
